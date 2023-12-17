@@ -5,8 +5,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +16,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         enableUserLocation();
 
         mMap.setOnMapClickListener(this);
-        showSavedGeofenceIDs();
+
     }
 
     private void enableUserLocation() {
@@ -119,87 +123,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapClick(LatLng latLng) {
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Waypoint"));
 
-        addCircle(latLng, 200);
-        Geofence geofence = geofenceHelper.createGeofence(latLng, 200, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
-                .addGeofence(geofence)
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-                .build();
-        PendingIntent pendingIntent = getGeofencePendingIntent();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            return;
-        }
-        geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TAG", "onSuccess: Geofence Added...");
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("TAG", "onFailure: " + e.getMessage());
-                    }
-                });
+           mMap.addMarker(new MarkerOptions().position(latLng));
 
-        saveGeofence("Geofence_" + latLng.latitude + "_" + latLng.longitude);
+
+            addCircle(latLng, 200);
+
+            // Create and save geofence (remaining code to save geofence)
+            Geofence geofence = geofenceHelper.createGeofence(latLng, 200, Geofence.GEOFENCE_TRANSITION_ENTER);
+            GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
+                    .addGeofence(geofence)
+                    .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+
+                    .build();
+            PendingIntent pendingIntent = getGeofencePendingIntent();
+            if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                    .addOnSuccessListener(MapsActivity.this, new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("TAG", "onSuccess: Geofence Added...");
+                        }
+                    })
+                    .addOnFailureListener(MapsActivity.this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("TAG", "onFailure: " + e.getMessage());
+                        }
+                    });
+
 
     }
+
+
 
     private void addCircle(LatLng area, int radius){
         CircleOptions circleOptions = new CircleOptions();
         circleOptions.center(area);
-        circleOptions.radius(200);
+        circleOptions.radius(radius);
         circleOptions.strokeColor(Color.GREEN);
         circleOptions.fillColor(Color.RED);
         circleOptions.strokeWidth(4);
         mMap.addCircle(circleOptions);
 
     }
-    private void saveGeofence(String geofenceID) {
-        SharedPreferences.Editor editor = savedGeofence.edit();
-        editor.putString(geofenceID, geofenceID);
-        editor.apply();
-    }
 
 
-    private void showSavedGeofenceIDs() {
-        Map<String, ?> allEntries = savedGeofence.getAll();
 
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            // Here, entry.getKey() will contain the saved geofence IDs
-            String geofenceID = entry.getKey();
-            // You can use the geofenceID as needed, for example, adding markers, circles, etc.
-            Log.d("Saved Geofence ID", geofenceID);
-
-             LatLng latLng = getLatLngFromGeofenceID(geofenceID);
-             mMap.addMarker(new MarkerOptions().position(latLng).title("Waypoint"));
-
-
-        }
-    }
-    // Helper method to convert geofence ID to LatLng (example placeholder implementation)
-    private LatLng getLatLngFromGeofenceID(String geofenceID) {
-        // Implement logic to extract LatLng from geofenceID
-        // Example: Geofence ID format is "Geofence_latitude_longitude"
-        String[] parts = geofenceID.split("_");
-        if (parts.length == 3) {
-            double latitude = Double.parseDouble(parts[1]);
-            double longitude = Double.parseDouble(parts[2]);
-            return new LatLng(latitude, longitude);
-        } else {
-            // Default location (for demonstration)
-            return new LatLng(0, 0);
-        }
-    }
 
     private PendingIntent getGeofencePendingIntent() {
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
-        Log.d("Hello in ", "IM IN HEREIXOSDIO");
         return PendingIntent.getBroadcast(this, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
     }
