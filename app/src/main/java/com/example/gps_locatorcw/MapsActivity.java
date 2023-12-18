@@ -125,39 +125,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapClick(LatLng latLng) {
 
 
-           mMap.addMarker(new MarkerOptions().position(latLng));
+        mMap.addMarker(new MarkerOptions().position(latLng));
 
 
-            addCircle(latLng, 200);
-
-            // Create and save geofence (remaining code to save geofence)
-            Geofence geofence = geofenceHelper.createGeofence(latLng, 200, Geofence.GEOFENCE_TRANSITION_ENTER);
-            GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
-                    .addGeofence(geofence)
-                    .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-
-                    .build();
-            PendingIntent pendingIntent = getGeofencePendingIntent();
-            if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                    .addOnSuccessListener(MapsActivity.this, new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("TAG", "onSuccess: Geofence Added...");
-                        }
-                    })
-                    .addOnFailureListener(MapsActivity.this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("TAG", "onFailure: " + e.getMessage());
-                        }
-                    });
+        addCircle(latLng, 100);
+        addGeo(latLng, 100);
 
 
     }
 
+
+    private void addGeo(LatLng latLng, float radius) {
+
+        // Check if permission is granted before adding geofences
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Geofence geofence = geofenceHelper.createGeofence(latLng, radius, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
+            GeofencingRequest geoReq = geofenceHelper.getGeoReq(geofence);
+            PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+
+
+            geofencingClient.addGeofences(geoReq, pendingIntent)
+                    .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("TAG", "Geofence added successfully");
+                        }
+                    })
+                    .addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("TAG", "Failed to add geofence: " + e.getMessage());
+                        }
+                    });
+        } else {
+            // If permission is not granted, handle it here (e.g., request permission)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+        }
+
+    }
 
 
     private void addCircle(LatLng area, int radius){
@@ -171,13 +176,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-
-
-    private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
-        return PendingIntent.getBroadcast(this, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-    }
 
 }

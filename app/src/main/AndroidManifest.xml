@@ -16,10 +16,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GPS_LocatorCW"
         tools:targetApi="31">
+        <activity
+            android:name=".Stats"
+            android:exported="false" />
+
         <service
             android:name=".LocationTrackingService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 

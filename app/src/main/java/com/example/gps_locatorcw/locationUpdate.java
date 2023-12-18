@@ -25,14 +25,18 @@ public class locationUpdate implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         // Update latitude and longitude TextViews with new values by their IDs
-        TextView latitudeTextView = ((MainActivity) context).findViewById(R.id.latitude);
-        TextView longitudeTextView = ((MainActivity) context).findViewById(R.id.longtitude);
+//        TextView latitudeTextView = ((MainActivity) context).findViewById(R.id.latitude);
+//        TextView longitudeTextView = ((MainActivity) context).findViewById(R.id.longtitude);
+//
+//        if (latitudeTextView != null && longitudeTextView != null) {
+//            latitudeTextView.setText("Latitude: " + location.getLatitude());
+//            longitudeTextView.setText("Longitude: " + location.getLongitude());
+//        }
 
-        if (latitudeTextView != null && longitudeTextView != null) {
-            latitudeTextView.setText("Latitude: " + location.getLatitude());
-            longitudeTextView.setText("Longitude: " + location.getLongitude());
-        }
+        Log.d("Hello", "Latitude" + location.getLatitude() + "Longtitude " + location.getLongitude());
     }
+
+
 
 
     @Override
