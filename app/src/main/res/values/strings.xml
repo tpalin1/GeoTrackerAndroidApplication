@@ -1,4 +1,25 @@
 <resources>
     <string name="app_name">GPS_LocatorCW</string>
     <string name="title_activity_maps">MapsActivity</string>
+
+
+    <string-array name="name">
+        <item>Name1</item>
+        <item>Name2</item>
+        <item>Name3</item>
+
+    </string-array>
+
+    <string-array name="duration">
+        <item>Dur1</item>
+        <item>Dur2</item>
+        <item>Dur3</item>
+
+    </string-array>
+
+    <string name="geofence_transition_invalid_type">Invalid geofence transition type</string>
+    <string name="geofence_transition_notification">%1$s geofence: %2$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

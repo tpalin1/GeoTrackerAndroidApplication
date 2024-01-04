@@ -1,90 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
 
 
-    <Button
-        android:id="@+id/Cycle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
-        android:layout_marginEnd="29dp"
-        android:layout_marginBottom="160dp"
-        android:text="Cycle"
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <!-- Your TextView -->
+
+    <!-- Buttons outside the map container -->
+
+    <!-- Map container -->
+
+    <FrameLayout
+        android:id="@+id/map_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DDDDDD"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/cycle"
-        app:layout_constraintStart_toEndOf="@+id/run" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/run"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="160dp"
-        android:text="Run"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <!-- Map Fragment or other map-related components -->
 
-    <Button
-        android:id="@+id/cycle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="59dp"
-        android:layout_marginBottom="160dp"
-        android:text="Walk"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/textActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="350dp"
+            android:text="Select the activity you would like to do" />
 
-    <TextView
-        android:id="@+id/textActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="66dp"
-        android:layout_marginEnd="107dp"
-        android:layout_marginBottom="105dp"
-        android:text="Select the activity you would like to do"
-        app:layout_constraintBottom_toTopOf="@+id/run"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/toMaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="670dp"
+            android:background="#000000"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
 
-    <TextView
-        android:id="@+id/longtitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="321dp"
-        android:layout_marginBottom="47dp"
-        android:text="Longtitude: "
-        app:layout_constraintBottom_toTopOf="@+id/latitude"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/homeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="680dp"
+            android:background="#000000"
+            app:srcCompat="@android:drawable/ic_menu_compass" />
 
-    <TextView
-        android:id="@+id/latitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="345dp"
-        android:layout_marginBottom="576dp"
-        android:text="latitude:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/activitybtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="670dp"
+            android:background="#131313"
+            app:srcCompat="@android:drawable/ic_menu_view" />
 
-    <Button
-        android:id="@+id/toMaps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="316dp"
-        android:layout_marginEnd="290dp"
-        android:text="Go to Maps"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textActivity2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PathFinder"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:layout_marginStart="128dp"
+            android:layout_marginTop="144dp" />
+
+        <Button
+            android:id="@+id/run"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="400dp"
+            android:text="Run" />
+
+        <Button
+            android:id="@+id/cycle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="192dp"
+            android:layout_marginTop="400dp"
+            android:text="Walk" />
+    </FrameLayout>
+
+    `
+
 </androidx.constraintlayout.widget.ConstraintLayout>

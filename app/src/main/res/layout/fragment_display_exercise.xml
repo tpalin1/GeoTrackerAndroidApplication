@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+        <!-- This is where your map will be displayed -->
+        <fragment
+            android:id="@+id/maps_fragmentView"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    <!-- Other content or views you want to display below the map -->
+    <!-- For example, add a TextView or any other views here -->
+
+</LinearLayout>
