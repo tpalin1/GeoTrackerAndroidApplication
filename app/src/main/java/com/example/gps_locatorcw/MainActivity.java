@@ -159,10 +159,17 @@ public class MainActivity extends AppCompatActivity {
     }
     private void openStatsFragment(String activityType) {
 
-        // Replace the current fragment with MapFragment
+        StatFragment statFragment = new StatFragment();
+        Bundle args = new Bundle();
+        args.putString("activityType", activityType);
+        statFragment.setArguments(args);
+
         getSupportFragmentManager().beginTransaction()
-                //Open the statFragment fragment
-                .replace(R.id.map_fragment_container, new StatFragment()).addToBackStack(null).commit();
+                .replace(R.id.map_fragment_container, statFragment)
+                .addToBackStack(null)
+                .commit();
+        // Replace the current fragment with MapFragment
+
     }
 
     private void requestPermissionsIfNecessary() {

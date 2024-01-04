@@ -31,6 +31,12 @@ public interface StatDAO {
     @Query("SELECT * FROM user_stattable ORDER BY exercise ASC")
     List<ExerciseStats> getAlphabetizedCats();
 
+    @Query("SELECT * FROM user_stattable WHERE exerciseType = 'Run'")
+    List<ExerciseStats> getRun();
+
+    @Query("SELECT * FROM user_stattable WHERE exerciseType = 'Walk'")
+    List<ExerciseStats> getWalk();
+
     @Query("SELECT * FROM user_stattable")
     LiveData<List<ExerciseStats>> getAllExerciseStatsAsync(); // Return LiveData with coroutines
 

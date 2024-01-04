@@ -20,6 +20,9 @@ public class ExerciseStats {
     @ColumnInfo(name = "exercise")
     private String exercise;
 
+
+    @ColumnInfo(name = "exerciseType")
+    private String exerciseType;
     @ColumnInfo(name = "duration")
     private double duration;
     @ColumnInfo(name = "avgpace")
@@ -28,14 +31,17 @@ public class ExerciseStats {
     private String distance;
 
 
+
+
     // New field representing a list of points (latitude and longitude)
 
 
     @ColumnInfo(name = "coordinates")
     private List<double[]> coordinates;
 
-    public ExerciseStats(@NonNull String exercise, double duration, List<double[]> coordinates, String distance, String avgpace){
+    public ExerciseStats(@NonNull String exercise, String exerciseType, double duration, List<double[]> coordinates, String distance, String avgpace){
         this.exercise = exercise;
+        this.exerciseType = exerciseType;
         this.duration = duration;
         this.coordinates = coordinates;
         this.distance = distance;
@@ -44,6 +50,14 @@ public class ExerciseStats {
     // Getter method for 'exercise' field
     public String getExercise() {
         return exercise;
+    }
+
+    public String getExerciseType(){
+        return exerciseType;
+    }
+
+    public void setExerciseType(String exerciseType){
+        this.exerciseType = exerciseType;
     }
 
 

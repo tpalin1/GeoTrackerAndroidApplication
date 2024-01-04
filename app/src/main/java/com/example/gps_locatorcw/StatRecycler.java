@@ -42,6 +42,8 @@ public class StatRecycler extends RecyclerView.Adapter<StatRecycler.StatViewHold
         return new StatRecycler.StatViewHolder(view, mpInterface);
     }
 
+
+    //Sort the data by "Run"
     @Override
     public void onBindViewHolder(@NonNull StatRecycler.StatViewHolder holder, int position) {
         // Bind data to your views in MyViewHolder
@@ -57,6 +59,8 @@ public class StatRecycler extends RecyclerView.Adapter<StatRecycler.StatViewHold
 
 
     }
+
+
 
     public void sortByMostDuration() {
         // Sort exerciseStatsList by the most duration
@@ -90,6 +94,8 @@ public class StatRecycler extends RecyclerView.Adapter<StatRecycler.StatViewHold
             notifyDataSetChanged(); // Notify the adapter that the data has changed
         }
     }
+
+
 
 
     public static class StatViewHolder extends RecyclerView.ViewHolder {

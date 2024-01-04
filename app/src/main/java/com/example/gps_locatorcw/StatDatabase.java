@@ -9,7 +9,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-@Database(entities = {ExerciseStats.class}, version = 5, exportSchema = false)
+@Database(entities = {ExerciseStats.class}, version = 8, exportSchema = false)
 public abstract class StatDatabase extends RoomDatabase {
 
     private static final int threadCount = 4;

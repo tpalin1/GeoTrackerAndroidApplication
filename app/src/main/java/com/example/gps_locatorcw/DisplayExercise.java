@@ -47,9 +47,7 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
-    // Method to draw a polyline on the map using given coordinates
     private void drawPolyline(List<double[]> coordinates) {
-
         PolylineOptions polylineOptions = new PolylineOptions();
 
         for (double[] coordinate : coordinates) {
@@ -66,17 +64,23 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
         }
 
         mMap.addPolyline(polylineOptions);
+
+        // Check if the polyline has points
+        if (!polylineOptions.getPoints().isEmpty()) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (LatLng latLng : polylineOptions.getPoints()) {
-            builder.include(latLng);
+            for (LatLng latLng : polylineOptions.getPoints()) {
+                builder.include(latLng);
+            }
+            LatLngBounds bounds = builder.build();
+
+            // Calculate the camera position
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 200); // Set your desired padding here
+
+            // Set the camera position and adjust the zoom level
+            mMap.moveCamera(cameraUpdate);
         }
-        LatLngBounds bounds = builder.build();
-        int padding = 100; // Padding in pixels around the polyline
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        mMap.animateCamera(cameraUpdate);
-
-
     }
+
 
 
     private void enableUserLocation() {

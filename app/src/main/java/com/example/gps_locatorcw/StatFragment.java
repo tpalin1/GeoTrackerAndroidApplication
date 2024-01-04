@@ -2,6 +2,7 @@ package com.example.gps_locatorcw;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,8 +19,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,7 +40,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -48,7 +50,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener{
+public class StatFragment extends Fragment implements OnMapReadyCallback{
 
     private LocationTrackingService locationService;
 
@@ -81,6 +83,8 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
     private StatDatabase database;
     private StatDAO statDAO;
 
+    private String activityType;
+
 
 
     @Override
@@ -97,11 +101,24 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
             mapFragment.getMapAsync(this);
         }
 
+        Button viewAllButton = view.findViewById(R.id.viewAll);
+        viewAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGeofenceListDialog();
+            }
+        });
+
         geofencingClient = LocationServices.getGeofencingClient(requireActivity());
         geofenceViewModel = new ViewModelProvider(this).get(GeofenceViewModel.class);
 
 
+        Bundle args = getArguments();
+        if (args != null) {
+            Log.d("bdoidfowebf", "onViewCreated: " + args.getString("activityType"));
+             activityType = args.getString("activityType", ""); // Retrieve the activityType
 
+        }
 
         // Initialize the database and GeofenceDAO
         geofenceDatabase = GeofenceDatabase.getDatabase(requireContext());
@@ -164,10 +181,11 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
 //        stateTextView.setText("Your desired text here");
 
         Button stopBtn = view.findViewById(R.id.stopbtn);
-        stopBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                promptExerciseName(); // Prompt for exercise name when the button is clicked
+
+        if(activityType!=null) {
+            // Binding to LocationTrackingService
+            stopBtn.setOnClickListener(v -> {
+                promptExerciseName(activityType); // Prompt for exercise name when the button is clicked
                 if (isBound) { // Check if the service is bound before unbinding
                     requireContext().unbindService(connection);
                     isBound = false;
@@ -175,11 +193,11 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                         locationService.stopTracking();
                     }
                 }
-            }
+            });
 
-            // Binding to LocationTrackingService
+        }
+            stopBtn.setBackgroundColor(Color.RED);
 
-        });
 
 
         Intent serviceIntent = new Intent(requireContext(), LocationTrackingService.class);
@@ -188,8 +206,51 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
             requireContext().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
 
     }
+    private void showGeofenceListDialog() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.geofence_display_list);
+
+        ListView geofenceListView = dialog.findViewById(R.id.geofenceListView);
+
+        // Use your ViewModel to observe the geofence data changes
+        geofenceViewModel.getAllGeofencesAsync().observe(getViewLifecycleOwner(), new Observer<List<GeofenceStats>>() {
+            @Override
+            public void onChanged(List<GeofenceStats> geofenceStatsList) {
+
+                if (geofenceStatsList != null) {
+                    List<String> geofenceNames = new ArrayList<>();
+                    int index = 1;
+                    for (GeofenceStats geofenceStats : geofenceStatsList) {
+                        String reminder = geofenceStats.getReminder();
+                        // Append index and reminder to the geofenceNames list
+                        geofenceNames.add("Geofence " + index + " - " + reminder);
+                        index++;
+                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, geofenceNames);
+                    geofenceListView.setAdapter(adapter);
+                }
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    // Implement this method to retrieve geofence names or details to display in the list
+    private List<String> getGeofenceNames() {
+        // Retrieve your geofence data here (e.g., from Room database or ViewModel)
+        // Return a list of geofence names or details
+        // For example:
+        List<String> geofenceNames = new ArrayList<>();
+        // Add geofence names to the list
+        // geofenceNames.add("Geofence 1");
+        // geofenceNames.add("Geofence 2");
+        // ...
+        return geofenceNames;
+    }
     // Add a method to prompt an input dialog for the exercise name
-    private void promptExerciseName() {
+    private void promptExerciseName(String activityType) {
         // Use an AlertDialog or DialogFragment to prompt for exercise name
         // For example:
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -215,7 +276,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
 
                     // Use Kotlin coroutines to perform database operations off the main thread
                     StatDatabase.databaseWriteExecutor.execute(() -> {
-                        ExerciseStats exerciseStats = new ExerciseStats(exerciseName, distanceViewModel.getDistanceTravelled().getValue(),coordinates, distanceViewModel.getExerciseDuration().getValue(), distanceViewModel.getAveragePace().getValue());
+                        ExerciseStats exerciseStats = new ExerciseStats(exerciseName, activityType, distanceViewModel.getDistanceTravelled().getValue(),coordinates, distanceViewModel.getExerciseDuration().getValue(), distanceViewModel.getAveragePace().getValue());
                         statDAO.insert(exerciseStats); // Assuming you have an insert method in your DAO
 
                         // Fetch all ExerciseStats entries from the database asynchronously
@@ -310,98 +371,13 @@ private void enableUserLocation() {
             }
         }
     }
-    @Override
-    public void onMapClick(LatLng latLng) {
-        mMap.addMarker(new MarkerOptions().position(latLng));
-
-        addCircle(latLng, 100);
-    }
-    private void addCircle(LatLng area, int radius) {
-
-        CircleOptions circleOptions = new CircleOptions();
-        circleOptions.center(area);
-        circleOptions.radius(radius);
-        circleOptions.strokeColor(Color.GREEN);
-        circleOptions.fillColor(Color.RED);
-        circleOptions.strokeWidth(4);
-        mMap.addCircle(circleOptions);
-
-        // Display an input dialog to get the user's custom reminder
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Enter Reminder");
-        final EditText input = new EditText(requireContext());
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String reminder = input.getText().toString().trim();
-                if (!reminder.isEmpty()) {
-                    String uniqueId = "UniqueId_" + area.latitude + "_" + area.longitude;
-//                    // Save the reminder with its respective Geofence ID
-//                    SharedPreferences.Editor editor = savedGeofence.edit();
-//                    editor.putString(uniqueId, reminder);
-//                    editor.apply();
-//
-//
-//                    // Create a geofence with the custom reminder as a context-specific data item
-//                    Bundle reminderData = new Bundle();
-//                    reminderData.putString("Reminder", reminder);
-                    // Save geofence into the Room database
-                    GeofenceStats geofenceStat = new GeofenceStats(uniqueId, reminder, area.latitude, area.longitude);
-                    geofenceViewModel.insert(geofenceStat);
-
-                    Geofence geofence = new Geofence.Builder()
-                            .setRequestId(uniqueId)
-                            .setCircularRegion(area.latitude, area.longitude, radius)
-                            .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                                    Geofence.GEOFENCE_TRANSITION_EXIT |
-                                    Geofence.GEOFENCE_TRANSITION_DWELL)
-                            .setLoiteringDelay(1000)
-                            .setNotificationResponsiveness(1000)
-                            .build();
-
-                    geofenceList.add(geofence);
-                    if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
 
 
-                    geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
-                            .addOnSuccessListener(requireActivity(), new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // Geofences added successfully
-                                }
-                            })
-                            .addOnFailureListener(requireActivity(), new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Failed to add Geofences
-                                }
-                            });
-
-
-                }
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         enableUserLocation();
-        mMap.setOnMapClickListener(this);
         loadSavedGeofences(); // Load saved geofences from the database
         initializePolylineOptions(); // Initialize PolylineOptions
 

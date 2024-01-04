@@ -7,6 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+
+
     <TextView
         android:id="@+id/timer"
         android:layout_width="wrap_content"
@@ -63,6 +65,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/viewAll"
+        android:layout_width="88dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="596dp"
+        android:text="View All"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Other UI components or buttons can be added here -->

@@ -27,16 +27,16 @@
         app:layout_constraintTop_toBottomOf="@id/maps_fragmentView" />
 
 
-    <Button
-        android:id="@+id/viewAll"
-        android:layout_width="88dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="596dp"
-        android:text="View All"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/viewAll"-->
+<!--        android:layout_width="88dp"-->
+<!--        android:layout_height="55dp"-->
+<!--        android:layout_marginBottom="596dp"-->
+<!--        android:text="View All"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.05"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
     <!-- Other UI components or buttons can be added here -->
 

@@ -69,7 +69,7 @@ public class StatPage extends AppCompatActivity implements RouteClick {
         sortingOptionsSpinner = findViewById(R.id.sortingOptionsSpinner);
 
         // Define sorting options array and set ArrayAdapter to the Spinner
-        String[] sortingOptions = {"Most Duration", "Recent", "Oldest"};
+        String[] sortingOptions = {"Most Duration", "Recent", "Run", "Walk"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortingOptions);
         sortingOptionsSpinner.setAdapter(spinnerAdapter);
         // Create an instance of StatRecycler
@@ -100,8 +100,13 @@ public class StatPage extends AppCompatActivity implements RouteClick {
                         statRecycler.sortByNewestDate();
 
                         break;
-                    case 2: // Oldest option
-                        // Handle other sorting options if needed
+                    case 2:
+                       //Run
+                        fetchAndDisplayRunExercises();
+                        break;
+                        case 3:
+                            //Walk
+                            fetchAndDisplayWalkExercises();
                         break;
                 }
             }
@@ -127,6 +132,24 @@ public class StatPage extends AppCompatActivity implements RouteClick {
                 .replace(R.id.map_fragment_container, dataFragment) // Replace with your fragment container ID
                 .addToBackStack(null) // Optional: Add the transaction to the back stack
                 .commit();
+    }
+
+    private void fetchAndDisplayRunExercises() {
+        StatDatabase.databaseWriteExecutor.execute(() -> {
+
+
+            List<ExerciseStats> runExercises = statDAO.getRun();
+
+           statRecycler.setData(runExercises);
+        });
+
+    }
+
+    private void fetchAndDisplayWalkExercises() {
+        StatDatabase.databaseWriteExecutor.execute(() -> {
+            List<ExerciseStats> walkExercises = statDAO.getWalk();
+            runOnUiThread(() -> statRecycler.setData(walkExercises));
+        });
     }
     private void SetUpModel() {
         StatDatabase.databaseWriteExecutor.execute(() -> {
@@ -208,7 +231,7 @@ public class StatPage extends AppCompatActivity implements RouteClick {
                         statDAO.updateExerciseName(oldExerciseName, newExerciseName);
 
                         // Fetch updated data and refresh RecyclerView
-                        exerciseStatsList = statDAO.getAllExerciseStats();
+                        List<ExerciseStats> updatedList = statDAO.getAllExerciseStats();
                         runOnUiThread(() -> {
                             statRecycler.setData(exerciseStatsList);
                         });
@@ -228,5 +251,6 @@ public class StatPage extends AppCompatActivity implements RouteClick {
 
         builder.show(); // Show the AlertDialog to capture user input
     }
+
 
 }
