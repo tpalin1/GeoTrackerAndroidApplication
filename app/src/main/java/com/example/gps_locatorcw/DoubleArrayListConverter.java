@@ -7,8 +7,13 @@ import java.util.List;
 
 public class DoubleArrayListConverter {
 
+    /**
+     * @param list - list of double arrays
+     * @return - string representation of list
+     * Converts a double array to a string for storage in the database of the array points.
+     */
     @TypeConverter
-    public static String fromDoubleArrayList(List<double[]> list) {
+    public static String ArrayList(List<double[]> list) {
         StringBuilder sb = new StringBuilder();
         for (double[] array : list) {
             for (double value : array) {

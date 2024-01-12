@@ -28,16 +28,18 @@
             android:text="@string/click_on_the_map_to_set_a_reminder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timer" />
+            app:layout_constraintTop_toBottomOf="@+id/timer"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/timer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="220dp"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="232dp"
 
-            android:layout_marginBottom="156dp"
+            android:layout_marginBottom="24dp"
             android:text="@{`Duration: ` + viewModel.getExerciseDuration()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -46,7 +48,7 @@
             android:id="@+id/avgpace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="105dp"
+            android:layout_marginStart="600dp"
             android:layout_marginEnd="276dp"
             android:layout_marginBottom="156dp"
             android:text="@{`Avg Pace: ` + viewModel.getAveragePace()}"
@@ -58,7 +60,7 @@
             android:id="@+id/distanceTrav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="31dp"
+            android:layout_marginStart="600dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="73dp"
             android:text="@{`Distance: ` + String.valueOf(viewModel.getDistanceTravelled())}"
@@ -72,9 +74,10 @@
         <fragment
             android:id="@+id/stat_fragment"
             android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="448dp"
-            android:layout_height="490dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="700dp"
+            android:layout_height="330dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -84,13 +87,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="162dp"
             android:layout_marginEnd="162dp"
-            android:layout_marginBottom="236dp"
+            android:layout_marginBottom="92dp"
             android:text="@string/stopButton"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.448"
             app:layout_constraintStart_toStartOf="parent" />
+
         <Button
             android:id="@+id/viewAll"
             android:layout_width="88dp"
@@ -105,12 +109,15 @@
         <Button
             android:id="@+id/startExercise"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="136dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="276dp"
+            android:layout_marginEnd="319dp"
+            android:layout_marginBottom="92dp"
             android:text="Start Exercise"
-            app:layout_constraintBottom_toTopOf="@+id/stopbtn"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Other UI components or buttons can be added here -->
 

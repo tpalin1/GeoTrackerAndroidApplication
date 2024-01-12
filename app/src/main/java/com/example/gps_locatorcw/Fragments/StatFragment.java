@@ -120,6 +120,12 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentStatBinding binding = FragmentStatBinding.inflate(inflater, container, false);
 
+        // Restore state from savedInstanceState
+        if (savedInstanceState != null) {
+            polylineOptions = savedInstanceState.getParcelable("polylineOptions");
+            // Other state restoration...
+        }
+
         distanceViewModel = new ViewModelProvider(requireActivity()).get(StatsViewModel.class);
         binding.setViewModel(distanceViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
@@ -176,7 +182,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
             public void onClick(View v) {
                 if (!locationService.hasStarted()) {
                     locationService.startExercise();
-
+                    moveToCurrentUserLocation();
                     startButton.setVisibility(View.GONE);
 
                     stopBtn.setVisibility(View.VISIBLE);
@@ -271,6 +277,13 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("polylineOptions", polylineOptions);
+    }
+
 
     private void addCircle(LatLng area, int radius) {
 
@@ -287,7 +300,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Enter Reminder");
+        builder.setTitle("Enter your reminder");
         final EditText input = new EditText(requireContext());
         builder.setView(input);
 
@@ -297,9 +310,8 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                 String reminder = input.getText().toString().trim();
                 if (!reminder.isEmpty()) {
                     String uniqueId = "UniqueId_" + area.latitude + "_" + area.longitude;
+                    Log.d("Hdhdhdhdhdhdhdhdhdhd", "onChanged: " + reminder);
                     geofenceMarkers.put(uniqueId, marker);
-
-
 
 
 
@@ -323,6 +335,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                             .setNotificationResponsiveness(1000)
                             .build();
 
+                    Log.d("Hdhdhdhdhdhdhdhdhdhd", " " + geofence.getRequestId());
                     geofenceList.add(geofence);
                     if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
@@ -366,8 +379,11 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
      * It has an X next to their name so that the user can delete the geofence from the database.
      */
 
+
+
     private void showGeofenceListDialog() {
         Dialog dialog = new Dialog(requireContext());
+        Log.d("dnpdfewnf", "Entered");
         dialog.setContentView(R.layout.geofence_display_list);
 
         ListView geofenceListView = dialog.findViewById(R.id.geofenceListView);
@@ -448,16 +464,12 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
      */
 
     private void promptExerciseName(String activityType) {
-
-
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Enter Exercise Name");
-
 
         final EditText input = new EditText(requireContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
-
 
         builder.setPositiveButton("Save Exercise", new DialogInterface.OnClickListener() {
             @Override
@@ -465,53 +477,46 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                 locationService.stopExercise();
 
                 String exerciseName = input.getText().toString().trim();
-                if (!exerciseName.isEmpty()) {
-                    Log.d("Here is the exercise", exerciseName);
-                    database = StatDatabase.getDatabase(locationService.getApplicationContext());
-                    statDAO = database.statDAO();
-
-
-                    List<double[]> coordinates = locationService.getCoordinatesArray();
-
-
-                    StatDatabase.databaseWriteExecutor.execute(() -> {
-                        ExerciseStats exerciseStats = new ExerciseStats(exerciseName, activityType, distanceViewModel.getDistanceTravelled().getValue(),coordinates, distanceViewModel.getExerciseDuration().getValue(), distanceViewModel.getAveragePace().getValue());
-                        statDAO.insert(exerciseStats);
-
-
-                        List<ExerciseStats> allStats = statDAO.getAllCats();
-
-
-                        for (ExerciseStats stats : allStats) {
-                            Log.d("ExerciseStats", "Exercise: " + stats.getExercise() + ", Duration: " + stats.getDuration());
-                        }
-                    });
-
-
-                    if (requireActivity().getSupportFragmentManager() != null) {
-                        requireActivity().getSupportFragmentManager().popBackStack();
-                    }
-
-
-
-                } else {
-
+                if (exerciseName.isEmpty()) {
+                   dialog.cancel();
                 }
+
+
+
+                Log.d("Here is the exercise", exerciseName);
+                database = StatDatabase.getDatabase(locationService.getApplicationContext());
+                statDAO = database.statDAO();
+
+
+
+                List<double[]> coordinates = locationService.getCoordinatesArray();
+
+                StatDatabase.databaseWriteExecutor.execute(() -> {
+                    ExerciseStats exerciseStats = new ExerciseStats(exerciseName, activityType, distanceViewModel.getDistanceTravelled().getValue(), coordinates, distanceViewModel.getExerciseDuration().getValue(), distanceViewModel.getAveragePace().getValue());
+                    statDAO.insert(exerciseStats);
+
+                    List<ExerciseStats> allStats = statDAO.getAllCats();
+
+                    for (ExerciseStats stats : allStats) {
+                        Log.d("ExerciseStats", "Exercise: " + stats.getExercise() + ", Duration: " + stats.getDuration());
+                    }
+                });
+
 
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        builder.setNegativeButton("Dont save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
 
+        if (requireActivity().getSupportFragmentManager() != null) {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        }
         builder.show();
-
-
-
-
     }
 
 
@@ -530,7 +535,7 @@ private void enableUserLocation() {
                         PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED) {
-
+            //Request Permissions for everything needed for geofencing and tracking
             ActivityCompat.requestPermissions(requireActivity(),
                     new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -539,8 +544,15 @@ private void enableUserLocation() {
                     },
                     MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
         } else {
+
+            //So they can navigate throguh the app
             mMap.setMyLocationEnabled(true);
-            moveToCurrentUserLocation();
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+
         }
     }
 
@@ -608,7 +620,18 @@ private void enableUserLocation() {
 
 
 
+        // Check if the user has started an exercise
+        if (locationService != null && locationService.hasStarted()) {
+            // User has started an exercise, proceed with enabling features
 
+            moveToCurrentUserLocation();
+            enableUserLocation();
+            loadSavedGeofences();
+
+            initializePolylineOptions();
+
+        }
+        //If they havent started a
         mMap.setOnMapClickListener(this);
 
         Log.d("Helli there", "sdabdasobdobsabiodsaipo");
@@ -617,7 +640,6 @@ private void enableUserLocation() {
         loadSavedGeofences();
         initializePolylineOptions();
 
-        moveToCurrentUserLocation();
 
 
 
@@ -634,9 +656,14 @@ private void enableUserLocation() {
      */
 
     private void initializePolylineOptions() {
-        polylineOptions = new PolylineOptions();
-        polylineOptions.color(Color.BLUE);
-        polylineOptions.width(10f);
+
+            // Initialize polylineOptions if not restored from savedInstanceState
+            if (polylineOptions == null) {
+                polylineOptions = new PolylineOptions();
+                polylineOptions.color(Color.BLUE);
+                polylineOptions.width(10f);
+            }
+
 
     }
 
@@ -717,6 +744,9 @@ private void enableUserLocation() {
     }
 
     public void updatePolylineOnMap(List<LatLng> polylinePoints) {
+        if(mMap == null) {
+            return;
+        }
         if (polyline == null) {
 
             polylineOptions.addAll(polylinePoints);
@@ -752,9 +782,12 @@ private void enableUserLocation() {
             LocationTrackingService.LocalBinder binder = (LocationTrackingService.LocalBinder) service;
             locationService = binder.getService();
             isBound = true;
-            if(locationService.hasStarted()){
-                getView().findViewById(R.id.startExercise).setVisibility(View.GONE);
-                getView().findViewById(R.id.stopbtn).setVisibility(View.VISIBLE);
+            if(locationService.hasStarted() && !locationService.isPaused()){
+                if(getView() != null){
+                    getView().findViewById(R.id.startExercise).setVisibility(View.GONE);
+                    getView().findViewById(R.id.stopbtn).setVisibility(View.VISIBLE);
+                }
+
             }
             locationService.setCallback(progress -> {
                 if (getActivity() != null) {

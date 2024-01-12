@@ -69,7 +69,7 @@ public class StatPage extends Fragment implements RouteClick {
 
 
         sortingOptionsSpinner = view.findViewById(R.id.sortingOptionsSpinner);
-        String[] sortingOptions = {"Recent", "Most Duration", "Run", "Walk"};
+        String[] sortingOptions = {"Recent", "Most Duration", "Run", "Walk", "Cycle"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, sortingOptions);
         sortingOptionsSpinner.setAdapter(spinnerAdapter);
         statRecycler = new StatRecycler(requireContext(), exerciseStatsList, this);
@@ -91,6 +91,9 @@ public class StatPage extends Fragment implements RouteClick {
                         break;
                     case 3:
                         fetchAndDisplayWalkExercises();
+                        break;
+                    case 4:
+                        fetchAndDisplayCycleExercises();
                         break;
                 }
             }
@@ -137,6 +140,13 @@ public class StatPage extends Fragment implements RouteClick {
             requireActivity().runOnUiThread(() -> {
                 statRecycler.setData(runExercises);
             });
+        });
+    }
+
+    private void fetchAndDisplayCycleExercises() {
+        StatDatabase.databaseWriteExecutor.execute(() -> {
+            List<ExerciseStats> cycleExercises = statDAO.getCycle();
+            requireActivity().runOnUiThread(() -> statRecycler.setData(cycleExercises));
         });
     }
 
@@ -201,13 +211,13 @@ public class StatPage extends Fragment implements RouteClick {
             ExerciseStats clickedExercise = statRecycler.filteredStats.get(position);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setTitle("Enter New Exercise Name");
+            builder.setTitle("Edit notes");
 
             final EditText input = new EditText(requireContext());
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String newExerciseName = input.getText().toString();

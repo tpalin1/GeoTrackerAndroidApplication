@@ -51,5 +51,7 @@
     <string name="click_on_the_map_to_set_a_reminder">Click on the map to set a reminder!</string>
     <string name="see_how_you_improved">See how you improved</string>
     <string name="delete_button">Delete button</string>
+    <string name="current_exercise">Current Exercise:</string>
+    <string name="cycle">Cycle</string>
 
 </resources>

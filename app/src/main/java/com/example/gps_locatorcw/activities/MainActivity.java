@@ -2,7 +2,6 @@ package com.example.gps_locatorcw.activities;
 
 import static java.util.Calendar.getInstance;
 
-import com.example.gps_locatorcw.Fragments.MapFragment;
 import com.example.gps_locatorcw.Fragments.StatFragment;
 import com.example.gps_locatorcw.Fragments.StatPage;
 import com.example.gps_locatorcw.R;
@@ -18,7 +17,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -115,32 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 homeActivity.bringToFront();
             }
         });
-        toMapsButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * @param v The view that was clicked.
-             * Go to the map fragment and see the map and their location
-             */
-            @Override
-            public void onClick(View v) {
 
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    showPermissionExplanationDialog();
-
-
-                }getSupportFragmentManager().beginTransaction()
-
-
-                        .replace(R.id.map_fragment_container, new MapFragment())
-                        .addToBackStack(null)
-
-                        .commit();
-                homeActivity.bringToFront();
-
-
-            }
-
-            });
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 123);
@@ -154,11 +127,16 @@ public class MainActivity extends AppCompatActivity {
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
 
         Button runButton = findViewById(R.id.run);
-        Button walkButton = findViewById(R.id.cycle);
+        Button walkButton = findViewById(R.id.walks);
+        Button cycleButton = findViewById(R.id.cycle);
+
+
         ImageView activityBtn = findViewById(R.id.activitybtn);
 
         runButton.setOnClickListener(v -> openStatsFragment("Run"));
         walkButton.setOnClickListener(v -> openStatsFragment("Walk"));
+        cycleButton.setOnClickListener(v -> openStatsFragment("Cycle"));
+
         activityBtn.setOnClickListener(v -> {
 
             StatPage statPage = new StatPage();

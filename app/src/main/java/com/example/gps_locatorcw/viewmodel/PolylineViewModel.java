@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PolylineViewModel  extends ViewModel {
@@ -16,6 +17,7 @@ public class PolylineViewModel  extends ViewModel {
     }
 
     public void updatePolyline(List<LatLng> points) {
-        polylinePoints.setValue(points);
+        List<LatLng> copiedList = new ArrayList<>(points);
+        polylinePoints.setValue(copiedList);
     }
 }

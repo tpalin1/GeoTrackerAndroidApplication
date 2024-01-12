@@ -48,6 +48,13 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
+
+    /**
+     * @param coordinates The coordinates of the route the user took
+     *                    Map the route they took onto the map
+     *
+     */
+    //Map the route they took
     private void drawPolyline(List<double[]> coordinates) {
         PolylineOptions polylineOptions = new PolylineOptions();
 
@@ -103,11 +110,15 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
         } else {
             mMap.setMyLocationEnabled(true);
             moveToCurrentUserLocation();
+            mMap.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
         }
     }
 
 
-
+    /**
+     * Move the camera to the zoomed in map route that the user took
+     */
     private void moveToCurrentUserLocation() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED &&
@@ -125,6 +136,8 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
             });
         }
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -144,18 +157,31 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
+    /**
+     * @param googleMap
+     * When the map is ready, draw the polyline
+     * and then make thre user able to move around the mapo and stuff
+     */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
         Bundle bundle = getArguments();
-
-
         if (bundle != null) {
             List<double[]> coordinates = (List<double[]>) bundle.getSerializable("coordinates");
             if (coordinates != null) {
                 drawPolyline(coordinates);
             }
         }
+
     }
-}
+
+
+
+
+
+    }

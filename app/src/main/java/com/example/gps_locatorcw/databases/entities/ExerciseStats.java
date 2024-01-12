@@ -17,7 +17,12 @@ import java.util.List;
 @TypeConverters(DoubleArrayListConverter.class)
 public class ExerciseStats {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    @ColumnInfo(name = "id")
+    private long id;
+
+
     @NonNull
     @ColumnInfo(name = "exercise")
     private String exercise;
@@ -56,6 +61,15 @@ public class ExerciseStats {
 
     public String getExerciseType(){
         return exerciseType;
+    }
+
+
+    public int getId() {
+        return (int) id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setExerciseType(String exerciseType){

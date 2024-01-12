@@ -148,6 +148,8 @@ public class StatRecycler extends RecyclerView.Adapter<StatRecycler.StatViewHold
                 /**
                  * @param v The view that was clicked.
                  *          Called when a view has been clicked.
+                 *
+                 *          Shows the selected map route that the user took on that speciifc exercise.
 
                  */
                 @Override

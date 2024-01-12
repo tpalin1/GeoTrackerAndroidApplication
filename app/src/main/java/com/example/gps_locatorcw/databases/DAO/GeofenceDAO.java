@@ -15,23 +15,37 @@ import java.util.List;
 @Dao
 public interface GeofenceDAO {
 
+    /**
+     * @param geofence
+     */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(GeofenceStats geofence);
 
 
-
+    /**
+     * @param geofence
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAsync(GeofenceStats geofence);
 
     @Query("SELECT * FROM geofence_table")
     List<GeofenceStats> getAllGeofences();
 
+    /**
+     * @param geofence
+     */
     @Update
     void updateGeofence(GeofenceStats geofence);
 
+    /**
+     * @param geofenceStats
+     */
     @Delete
     void delete(GeofenceStats geofenceStats);
 
+    /**
+     * @param id
+     */
     @Query("DELETE FROM geofence_table WHERE geofenceId = :id")
     void deleteGeofenceById(int id);
 

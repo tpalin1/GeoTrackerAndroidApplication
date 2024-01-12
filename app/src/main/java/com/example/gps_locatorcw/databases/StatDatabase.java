@@ -12,7 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.gps_locatorcw.databases.entities.ExerciseStats;
 import com.example.gps_locatorcw.databases.DAO.StatDAO;
 
-@Database(entities = {ExerciseStats.class}, version = 10, exportSchema = false)
+@Database(entities = {ExerciseStats.class}, version = 11, exportSchema = false)
 public abstract class StatDatabase extends RoomDatabase {
 
     private static final int threadCount = 4;

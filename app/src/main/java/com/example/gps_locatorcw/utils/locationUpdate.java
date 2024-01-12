@@ -69,6 +69,10 @@ public class locationUpdate implements LocationListener {
     }
 
 
+    public void resetDistance(){
+        totalDistanceInMeters = 0.0;
+    }
+
     public  double getDistance(){
         return totalDistanceInMeters;
     }

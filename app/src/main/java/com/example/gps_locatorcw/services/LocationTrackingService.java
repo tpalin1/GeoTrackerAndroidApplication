@@ -30,6 +30,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Foregournd service for the users location
+ */
 public class LocationTrackingService extends Service {
 
 
@@ -76,6 +79,7 @@ public class LocationTrackingService extends Service {
 
     private locationUpdate locationListener;
 
+    PendingIntent contentPendingIntent;
 
     private static final int NOTIF_ID_START = 2;
 
@@ -88,6 +92,7 @@ public class LocationTrackingService extends Service {
 
     public void onCreate() {
         super.onCreate();
+        notificationManager = NotificationManagerCompat.from(this);
 
     }
 
@@ -98,11 +103,11 @@ public class LocationTrackingService extends Service {
         hasActivity = true;
 
 
-
+        //dont go into it
         if(hasStarted()){
             return START_NOT_STICKY;
         }
-
+        //Create the tracking service notification
         createNotif();
 
 
@@ -119,19 +124,25 @@ public class LocationTrackingService extends Service {
                 try {
                     if(!isPaused && startTracking && !isTrackingPaused){
                         long currentTime = System.currentTimeMillis();
+                        //Get the elapsed tinem
                         elapsedTime = currentTime - startTime;
                         Thread.sleep(1000);
                         distanceTravelled = locationListener.getDistanceInKilometers();
 
-                        remoteViewsLarge.setTextViewText(R.id.notificationDuration, getDuration());
-                        remoteViewsLarge.setTextViewText(R.id.notificationTimer, getDuration());
-                        remoteViewsLarge.setTextViewText(R.id.notificationDistance, String.format("%.2f km", distanceTravelled));
 
                         Log.d("ADBSIOHD", "Distance: " + distanceTravelled + " km");
+                        //Save all the locations to the list and then draw the polyline later
                         saveLocationToRouteList(locationListener.getCurrentLatitude(), locationListener.getCurrentLongitude());
-
+                        //Update the notification text
                         if (callback != null) {
+                            remoteViewsLarge.setTextViewText(R.id.notificationDuration, getDuration());
+                            remoteViewsLarge.setTextViewText(R.id.notificationTimer, getDuration());
+                            remoteViewsLarge.setTextViewText(R.id.notificationDistance, String.format("%.2f km", distanceTravelled));
+                            Log.d("sioafhidsa", "acsnpodfnpof");
                             callback.checkProg((int) distanceTravelled);
+
+                            // Update the notification text
+                            updateNotificationText(getDuration(), getDuration(), String.format("%.2f km", distanceTravelled));
                         }
                     }
                 } catch (InterruptedException e) {
@@ -144,8 +155,13 @@ public class LocationTrackingService extends Service {
     }
 
 
-
+    /**
+     * Method to create the notification
+     * Called when the service is started and makes the notification display that the sevrice is tracking the user.
+     *
+     */
     public void createNotif() {
+
         Intent contentIntent = new Intent(this, MainActivity.class);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(
@@ -155,11 +171,11 @@ public class LocationTrackingService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE
         );
 
-        // Update: Use NotificationCompat.Builder instead of Notification.Builder
+        // Create the notification that shows that the foreground is tracking
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Service Started")
-                .setContentText("Location tracking service has started.")
+                .setContentTitle("Tracking In Progress")
+                .setContentText("Location being tracked")
                 .setContentIntent(contentPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
@@ -176,17 +192,45 @@ public class LocationTrackingService extends Service {
             );
             notificationManager.createNotificationChannel(channel);
             builder.setChannelId(CHANNEL_ID);
+
         }
 
         startForeground(NOTIF_ID, builder.build());
     }
 
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+    private void updateNotificationText(String duration, String timer, String distance) {
+        // Cancel the existing notification
+        remoteViewsLarge.setTextViewText(R.id.notificationDuration, duration);
+        remoteViewsLarge.setTextViewText(R.id.notificationTimer, timer);
+        remoteViewsLarge.setTextViewText(R.id.notificationDistance, distance);
+
+        // Update the custom notification
+        Notification customNotificationLarge = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(remoteViewsLarge)
+                .setContentIntent(contentPendingIntent)
+                .setOnlyAlertOnce(true)
+                .build();
+
+        // Notify the NotificationManager about the update
+        notificationManager.notify(NOTIF_ID, customNotificationLarge);
+
+    }
+
     public List<LatLng> getLocationList() {
         return locationList;
     }
 
 
+    /**
+     * @param context Context of the application
+     *                Pause and resume the tracking service
+     */
     public static void toggleTracking(Context context) {
         isPaused = !isPaused;
     }
@@ -234,10 +278,18 @@ public class LocationTrackingService extends Service {
 
         return coordinatesArray;
     }
+
+    /**
+     * Method to start the location tracking service
+     * Called when the user starts the exercise
+     * It creates the notification channel for the service that has the exercise
+     */
+    //Create the notification channel for the service that has the exercise tunning
     private void startLocationTracking() {
         startTracking = true;
         hasStarted = true;
-        stopForeground(true);
+        isPaused = false;
+        locationListener.resetDistance();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -272,10 +324,10 @@ public class LocationTrackingService extends Service {
 
             Intent pauseIntent = new Intent(this, NotificationButtonClick.class);
             pauseIntent.setAction("PAUSE_TRACKING");
-            PendingIntent pausePendingIntent = PendingIntent.getBroadcast(this, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            PendingIntent pausePendingIntent = PendingIntent.getBroadcast(this, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             remoteViewsLarge.setOnClickPendingIntent(R.id.pauseButton, pausePendingIntent);
 
-            PendingIntent contentPendingIntent = PendingIntent.getActivity(
+             PendingIntent contentPendingIntent = PendingIntent.getActivity(
                     this,
                     1001,
                     contentIntent,
@@ -287,42 +339,61 @@ public class LocationTrackingService extends Service {
                     .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                     .setCustomContentView(remoteViewsLarge)
                     .setContentIntent(contentPendingIntent)
+                    .setOnlyAlertOnce(true)
                     .build();
+            remoteViewsLarge.setOnClickPendingIntent(R.id.stopButton, contentPendingIntent);
+
+
 
             startForeground(NOTIF_ID, customNotificationLarge);
+
         }
+
 
 
 
 
 }
 
-    public void stopExercise(){
-        stopTracking();
 
+    /**
+     * Stop the exercise and reset everything
+     */
+    public void stopExercise() {
+        Log.d("comp3018", "Exercise Stats:" + "Distance: " + distanceTravelled + " km" + " Duration: " + getDuration() + " Pace: " + getPace());
+
+        // Stop the foreground service
+
+        // Stop tracking and calculate stats
+        stopTracking();
+        calculateExerciseStats();
 
         stopForeground(true);
+
+
+        // Create the initial notification
         createNotif();
 
+        // Stop the service
         stopSelf();
-
     }
 
-
-
-
-
+    /**
+     * Reset all ready for the next exercise
+     * Called when the user starts a new exercise
+     */
     private void resetExerciseData() {
         coordinatesArray.clear();
         locationList.clear();
         distanceTravelled = 0;
+
         elapsedTime = 0;
         startTime = System.currentTimeMillis();
         endTime = 0;
     }
     public void startExercise(){
         if(!hasStarted){
-
+            stopForeground(true);
             resetExerciseData();
             startLocationTracking();
         }
@@ -345,7 +416,7 @@ public class LocationTrackingService extends Service {
     public String getPace() {
         if (distanceTravelled > 0 && elapsedTime > 0) {
             double paceInMinutesPerKm = elapsedTime / 1000.0 / 60.0 / distanceTravelled;
-
+            //Calculate avg oace
 
             int paceMinutes = (int) paceInMinutesPerKm;
             int paceSeconds = (int) ((paceInMinutesPerKm - paceMinutes) * 60);
@@ -376,6 +447,7 @@ public class LocationTrackingService extends Service {
             hasStarted = false;
             endTime = System.currentTimeMillis();
 
+
             calculateExerciseStats();
 
     }
@@ -394,17 +466,21 @@ public class LocationTrackingService extends Service {
 
         String durationFormatted = String.format("%02d:%02d", hours, minutes);
 
-
+        // Calculate the average pace
         double averagePaceSecondsPerKm = 0.0;
         if (distanceTravelled > 0 && durationInSeconds > 0) {
             double pace = durationInSeconds / distanceTravelled;
             averagePaceSecondsPerKm = pace;
         }
 
-
+        // Convert the average pace to minutes and seconds
         int paceMinutes = (int) (averagePaceSecondsPerKm / 60);
         int paceSeconds = (int) (averagePaceSecondsPerKm % 60);
         String averagePaceFormatted = String.format("%02d:%02d", paceMinutes, paceSeconds);
+
+
+        //PRINT OUT THE STATS
+        Log.d("comp3018", "Exercise Stats:"+ "Distance: " + distanceTravelled + " km" + " Duration: " + durationFormatted + " Pace: " + averagePaceFormatted);
 
 
     }
@@ -417,6 +493,7 @@ public class LocationTrackingService extends Service {
      */
     public void onAppInBackground() {
         if (locationManager != null && locationListener != null && startTracking == true) {
+            //Have lower intervals for better batteru usahe
 
             try {
                 locationManager.removeUpdates(locationListener);
@@ -438,6 +515,7 @@ public class LocationTrackingService extends Service {
     public void onAppInForeground() {
         if (locationManager != null && locationListener != null ) {
                 try {
+                    //Higher intervals for better accuracy when in foreground
                     locationManager.removeUpdates(locationListener);
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                             foregroundUpdateTime,

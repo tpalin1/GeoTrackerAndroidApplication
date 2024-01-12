@@ -21,9 +21,9 @@ public class NotificationButtonClick extends BroadcastReceiver {
 
             LocationTrackingService.toggleTracking(context);
         }
-
+        //Check if its stop tracking
         if (action != null && action.equals("STOP_TRACKING")) {
-
+            // Open the MapFragment
 
         }
     }

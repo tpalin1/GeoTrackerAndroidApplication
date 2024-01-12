@@ -46,6 +46,8 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
+        geofenceViewModel = new GeofenceViewModel();
+        // Get the transition type and the geofences triggered
         int transition = geofencingEvent.getGeofenceTransition();
         if (transition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             Log.d("GeofenceBroadcast", "onReceive: GEOFENCE_TRANSITION_ENTER");
@@ -66,17 +68,21 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                         String triggeredGeofenceId = triggeredGeofence.getRequestId();
 
                         for (GeofenceStats geofenceStats : allGeofences) {
+
+                            //Check if the geofence that was triggered is the same as the one in the database
                             Log.d("GeofenceBroadcast", "onChanged: " + geofenceStats.getGeofenceName());
                             Log.d("GeofenceBroadcast", "onChanged: " + triggeredGeofenceId);
 
                             if (geofenceStats.getGeofenceName().equals(triggeredGeofenceId) ){
 
-
+                                //Get the reminder from the database and show a notification
                                 String reminder = geofenceStats.getReminder();
                                 showNotification(context, "Entered", reminder);
+                                //Delete the geofence from the database
                                 GeofenceDatabase.databaseWriteExecutor.execute(() -> {
                                     geofenceDAO.delete(geofenceStats);
                                 });
+
 
                                 break;
                             }

@@ -11,12 +11,9 @@
 
     <FrameLayout
         android:id="@+id/Stat_Activity"
-        android:layout_width="406dp"
-        android:layout_height="603dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:background="#BDBDBD"
-        >
+        android:layout_width="800dp"
+        android:layout_height="330dp"
+        android:background="#BDBDBD">
         <!-- Other views within Stat_Activity -->
     </FrameLayout>
 
@@ -33,40 +30,40 @@
             android:id="@+id/cycle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="300dp"
-            android:layout_marginTop="400dp"
+            android:layout_marginStart="400dp"
+            android:layout_marginTop="180dp"
             android:text="@string/cycle" />
 
         <Button
             android:id="@+id/walks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="192dp"
-            android:layout_marginTop="400dp"
+            android:layout_marginStart="300dp"
+            android:layout_marginTop="180dp"
             android:text="@string/walk" />
 
         <TextView
             android:id="@+id/textActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="350dp"
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="100dp"
             android:text="@string/select_the_activity_you_would_like_to_do" />
 
         <ImageView
             android:id="@+id/toMaps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="300dp"
-            android:layout_marginTop="640dp"
+            android:layout_marginStart="400dp"
+            android:layout_marginTop="330dp"
             android:background="#000000"
             app:srcCompat="@android:drawable/ic_dialog_map" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
-            android:layout_marginTop="670dp"
+            android:layout_marginStart="300dp"
+            android:layout_marginTop="360dp"
             android:text="@string/home"
             android:textColor="@android:color/black"
             app:layout_constraintStart_toStartOf="@id/toMaps"
@@ -76,8 +73,8 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="270dp"
-            android:layout_marginTop="670dp"
+            android:layout_marginStart="370dp"
+            android:layout_marginTop="360dp"
             android:text="@string/view_reminders"
             android:textColor="@android:color/black"
             app:layout_constraintStart_toStartOf="@id/toMaps"
@@ -87,8 +84,8 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="670dp"
+            android:layout_marginStart="180dp"
+            android:layout_marginTop="360dp"
             android:text="@string/past_exercises"
             android:textColor="@android:color/black"
             app:layout_constraintStart_toStartOf="@id/toMaps"
@@ -98,8 +95,8 @@
             android:id="@+id/homeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
-            android:layout_marginTop="640dp"
+            android:layout_marginStart="300dp"
+            android:layout_marginTop="330dp"
             android:background="#000000"
             android:contentDescription="@string/home_btn"
             app:srcCompat="@android:drawable/ic_menu_compass" />
@@ -108,8 +105,8 @@
             android:id="@+id/activitybtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="96dp"
-            android:layout_marginTop="640dp"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="330dp"
             android:background="#131313"
             android:contentDescription="@string/activity_button"
             app:srcCompat="@android:drawable/ic_menu_view" />
@@ -118,8 +115,8 @@
             android:id="@+id/textActivity2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="128dp"
-            android:layout_marginTop="144dp"
+            android:layout_marginStart="300dp"
+            android:layout_marginTop="60dp"
             android:text="@string/pathfinder"
             android:textAlignment="center"
             android:textSize="20sp" />
@@ -128,9 +125,10 @@
             android:id="@+id/run"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="400dp"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="180dp"
             android:text="@string/run" />
+
         <!-- Other views -->
 
     </FrameLayout>
