@@ -1,4 +1,4 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.databases;
 
 import android.content.Context;
 
@@ -7,6 +7,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import com.example.gps_locatorcw.databases.DAO.GeofenceDAO;
+import com.example.gps_locatorcw.databases.entities.GeofenceStats;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,11 +20,11 @@ import java.util.concurrent.Executors;
 public abstract class GeofenceDatabase extends RoomDatabase {
 
     private static final int threadCount = 4;
-    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(threadCount);
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(threadCount);
     public abstract GeofenceDAO geofenceDAO();
 
     private static volatile GeofenceDatabase instance;
-    static GeofenceDatabase getDatabase(final Context context) {
+    public static GeofenceDatabase getDatabase(final Context context) {
         if (instance == null) {
             synchronized (GeofenceDatabase.class) {
                 if (instance == null) {
@@ -29,7 +32,7 @@ public abstract class GeofenceDatabase extends RoomDatabase {
                                     GeofenceDatabase.class, "geofence_table")
                             .fallbackToDestructiveMigration()
                             .addCallback(createCallback)
-//#allowMainThreadQueries()
+
                             .build();
                 }
             }
@@ -41,9 +44,9 @@ public abstract class GeofenceDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            // Perform database operations here upon creation
+
             databaseWriteExecutor.execute(() -> {
-                // Do something upon database creation if needed
+
             });
         }
     };

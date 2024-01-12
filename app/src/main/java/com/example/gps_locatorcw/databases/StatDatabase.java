@@ -1,6 +1,5 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.databases;
 import android.content.Context;
-import android.util.Log;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,15 +8,37 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-@Database(entities = {ExerciseStats.class}, version = 8, exportSchema = false)
+
+import com.example.gps_locatorcw.databases.entities.ExerciseStats;
+import com.example.gps_locatorcw.databases.DAO.StatDAO;
+
+@Database(entities = {ExerciseStats.class}, version = 10, exportSchema = false)
 public abstract class StatDatabase extends RoomDatabase {
 
     private static final int threadCount = 4;
-    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(threadCount);
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(threadCount);
+
+    public static StatDatabase getInstance(Context context) {
+        if (instance == null) {
+            synchronized (StatDatabase.class) {
+                if (instance == null) {
+                    instance = Room.databaseBuilder(context.getApplicationContext(),
+                                    StatDatabase.class, "user_stattable")
+                            .fallbackToDestructiveMigration()
+                            .addCallback(createCallback)
+
+                            .build();
+                }
+            }
+        }
+        return instance;
+    }
+
+
     public abstract StatDAO statDAO();
 
     private static volatile StatDatabase instance;
-    static StatDatabase getDatabase(final Context context) {
+    public static StatDatabase getDatabase(final Context context) {
         if (instance == null) {
             synchronized (StatDatabase.class) {
                 if (instance == null) {
@@ -25,7 +46,7 @@ public abstract class StatDatabase extends RoomDatabase {
                                     StatDatabase.class, "user_stattable")
                             .fallbackToDestructiveMigration()
 .addCallback(createCallback)
-//#allowMainThreadQueries()
+
                             .build();
                 }
             }
@@ -37,9 +58,9 @@ public abstract class StatDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            // Perform database operations here upon creation
+
             databaseWriteExecutor.execute(() -> {
-                // Do something upon database creation if needed
+
             });
         }
     };

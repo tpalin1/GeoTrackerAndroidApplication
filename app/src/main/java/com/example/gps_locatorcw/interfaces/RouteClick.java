@@ -1,4 +1,4 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.interfaces;
 
 public interface RouteClick {
 

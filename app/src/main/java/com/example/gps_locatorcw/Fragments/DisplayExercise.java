@@ -1,4 +1,4 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.Fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.gps_locatorcw.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -50,22 +51,23 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
     private void drawPolyline(List<double[]> coordinates) {
         PolylineOptions polylineOptions = new PolylineOptions();
 
+        Log.d("coordinates", String.valueOf(coordinates));
+
         for (double[] coordinate : coordinates) {
             double latitude = coordinate[0];
             double longitude = coordinate[1];
 
-            // Check if the coordinate is (0.0, 0.0), and skip it if it matches
+
             if (latitude == 0.0 && longitude == 0.0) {
-                continue; // Skip this coordinate
+                continue;
             }
 
-            Log.d("TAG", "drawPolyline: " + latitude + " " + longitude);
             polylineOptions.add(new LatLng(latitude, longitude));
         }
 
         mMap.addPolyline(polylineOptions);
 
-        // Check if the polyline has points
+
         if (!polylineOptions.getPoints().isEmpty()) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (LatLng latLng : polylineOptions.getPoints()) {
@@ -73,10 +75,10 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
             }
             LatLngBounds bounds = builder.build();
 
-            // Calculate the camera position
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 200); // Set your desired padding here
 
-            // Set the camera position and adjust the zoom level
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 200);
+
+
             mMap.moveCamera(cameraUpdate);
         }
     }
@@ -132,8 +134,8 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableUserLocation();
             } else {
-                // Permission denied
-                // Handle this scenario as needed
+
+
             }
         }
     }
@@ -147,6 +149,8 @@ public class DisplayExercise extends Fragment implements OnMapReadyCallback, Goo
         mMap = googleMap;
 
         Bundle bundle = getArguments();
+
+
         if (bundle != null) {
             List<double[]> coordinates = (List<double[]>) bundle.getSerializable("coordinates");
             if (coordinates != null) {

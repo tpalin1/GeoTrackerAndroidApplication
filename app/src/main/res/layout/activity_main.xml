@@ -1,82 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
-
-        <!-- Your TextView -->
-
-    <!-- Buttons outside the map container -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.MainActivity">
 
     <!-- Map container -->
+
+    <FrameLayout
+        android:id="@+id/Stat_Activity"
+        android:layout_width="406dp"
+        android:layout_height="603dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="#BDBDBD">
+        <!-- Other views within Stat_Activity -->
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/map_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#DDDDDD"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="#BDBDBD">
 
         <!-- Map Fragment or other map-related components -->
 
-        <TextView
-            android:id="@+id/textActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="350dp"
-            android:text="Select the activity you would like to do" />
-
-        <ImageView
-            android:id="@+id/toMaps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
-            android:layout_marginTop="670dp"
-            android:background="#000000"
-            app:srcCompat="@android:drawable/ic_dialog_map" />
-
-        <ImageView
-            android:id="@+id/homeBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="680dp"
-            android:background="#000000"
-            app:srcCompat="@android:drawable/ic_menu_compass" />
-
-        <ImageView
-            android:id="@+id/activitybtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="96dp"
-            android:layout_marginTop="670dp"
-            android:background="#131313"
-            app:srcCompat="@android:drawable/ic_menu_view" />
-
-        <TextView
-            android:id="@+id/textActivity2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PathFinder"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:layout_marginStart="128dp"
-            android:layout_marginTop="144dp" />
-
-        <Button
-            android:id="@+id/run"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="400dp"
-            android:text="Run" />
 
         <Button
             android:id="@+id/cycle"
@@ -84,9 +34,99 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="192dp"
             android:layout_marginTop="400dp"
-            android:text="Walk" />
+            android:text="@string/walk" />
+
+        <TextView
+            android:id="@+id/textActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="350dp"
+            android:text="@string/select_the_activity_you_would_like_to_do" />
+
+        <ImageView
+            android:id="@+id/toMaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="300dp"
+            android:layout_marginTop="640dp"
+            android:background="#000000"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="670dp"
+            android:text="@string/home"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="@id/toMaps"
+            app:layout_constraintTop_toBottomOf="@id/toMaps" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="670dp"
+            android:text="@string/view_reminders"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="@id/toMaps"
+            app:layout_constraintTop_toBottomOf="@id/toMaps" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="670dp"
+            android:text="@string/past_exercises"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="@id/toMaps"
+            app:layout_constraintTop_toBottomOf="@id/toMaps" />
+
+        <ImageView
+            android:id="@+id/homeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="640dp"
+            android:background="#000000"
+            android:contentDescription="@string/home_btn"
+            app:srcCompat="@android:drawable/ic_menu_compass" />
+
+        <ImageView
+            android:id="@+id/activitybtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="640dp"
+            android:background="#131313"
+            android:contentDescription="@string/activity_button"
+            app:srcCompat="@android:drawable/ic_menu_view" />
+
+        <TextView
+            android:id="@+id/textActivity2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="128dp"
+            android:layout_marginTop="144dp"
+            android:text="@string/pathfinder"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/run"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="400dp"
+            android:text="@string/run" />
+        <!-- Other views -->
+
     </FrameLayout>
 
-    `
+</RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+

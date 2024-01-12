@@ -1,7 +1,11 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.repos;
 
-import android.app.Application;
 import androidx.lifecycle.LiveData;
+
+import com.example.gps_locatorcw.databases.DAO.GeofenceDAO;
+import com.example.gps_locatorcw.databases.GeofenceDatabase;
+import com.example.gps_locatorcw.databases.entities.GeofenceStats;
+
 import java.util.List;
 
 public class GeofenceRepository {
@@ -13,9 +17,6 @@ public class GeofenceRepository {
         allGeofences = geofenceDAO.getAllGeofencesAsync();
     }
 
-    public LiveData<List<GeofenceStats>> getAllGeofences() {
-        return allGeofences;
-    }
 
     public LiveData<List<GeofenceStats>> getAllGeofencesAsync() {
         return geofenceDAO.getAllGeofencesAsync();
@@ -28,11 +29,18 @@ public class GeofenceRepository {
         });
     }
 
+    public void delete(GeofenceStats geofence){
+        GeofenceDatabase.databaseWriteExecutor.execute(() -> {
+            geofenceDAO.delete(geofence);
+        });
+    }
+
+
     public void insertAsync(GeofenceStats geofence) {
         GeofenceDatabase.databaseWriteExecutor.execute(() -> {
             geofenceDAO.insert(geofence);
         });
     }
 
-    // Other methods for database operations if needed
+
 }

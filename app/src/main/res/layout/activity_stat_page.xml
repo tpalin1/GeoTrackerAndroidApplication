@@ -4,46 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StatPage">
+    tools:context=".Fragments.StatPage">
 
     <Button
         android:id="@+id/check_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="See how you improved"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/see_how_you_improved"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/map_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <Spinner
+        android:id="@+id/sortingOptionsSpinner"
+        android:layout_width="154dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/statsRecycler"
+
+        android:layout_width="415dp"
+        android:layout_height="595dp"
+        android:layout_marginTop="72dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Spinner
-            android:id="@+id/sortingOptionsSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="150dp"
-            android:layout_marginLeft="150dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="143dp"
-            android:layout_marginRight="143dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/statsRecycler"
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="100dp" />
-
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/check_data" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

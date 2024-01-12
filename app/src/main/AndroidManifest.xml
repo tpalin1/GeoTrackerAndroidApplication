@@ -34,25 +34,33 @@
 
 
         <activity
-            android:name=".StatPage"
+            android:name=".Fragments.StatPage"
             android:exported="false" />
         >
 
         <service
-            android:name=".LocationTrackingService"
+            android:name=".services.LocationTrackingService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name=".GeofenceBroadcastReceiver"
+            android:name=".utils.GeofenceBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.gps_locatorcw.ACTION_GEOFENCE_EVENT" />
             </intent-filter>
         </receiver>
+        <!-- Register the BroadcastReceiver -->
+        <receiver android:name=".utils.NotificationButtonClick" android:exported="true">
+
+        </receiver>
+        <provider
+            android:name=".databases.ExerciseProvider"
+            android:authorities="com.example.gps_locatorcw.databases.ExerciseProvider"
+            android:exported="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

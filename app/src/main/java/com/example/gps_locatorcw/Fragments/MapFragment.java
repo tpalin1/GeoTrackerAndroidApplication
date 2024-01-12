@@ -1,15 +1,13 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -19,10 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +26,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.gps_locatorcw.utils.GeofenceBroadcastReceiver;
+import com.example.gps_locatorcw.viewmodel.GeofenceViewModel;
+import com.example.gps_locatorcw.R;
+import com.example.gps_locatorcw.databases.DAO.GeofenceDAO;
+import com.example.gps_locatorcw.databases.GeofenceDatabase;
+import com.example.gps_locatorcw.databases.entities.GeofenceStats;
+import com.example.gps_locatorcw.repos.GeofenceRepository;
+import com.example.gps_locatorcw.services.LocationTrackingService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -47,7 +50,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener{
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 123;
@@ -81,9 +83,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
          geofenceViewModel = new ViewModelProvider(this).get(GeofenceViewModel.class);
 
 
-
-
-        // Initialize the database and GeofenceDAO
         geofenceDatabase = GeofenceDatabase.getDatabase(requireContext());
         geofenceDAO = geofenceDatabase.geofenceDAO();
 
@@ -91,67 +90,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         geofenceViewModel = new ViewModelProvider(this).get(GeofenceViewModel.class);
 
         geofenceViewModel.init(new GeofenceRepository(geofenceDAO));
-
-        Button viewAllButton = view.findViewById(R.id.viewAll);
-        viewAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showGeofenceListDialog();
-            }
-        });
-
-
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.maps_fragmentView);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
     }
 
-
-
-    private void showGeofenceListDialog() {
-        Dialog dialog = new Dialog(requireContext());
-        dialog.setContentView(R.layout.geofence_display_list);
-
-        ListView geofenceListView = dialog.findViewById(R.id.geofenceListView);
-
-        // Use your ViewModel to observe the geofence data changes
-        geofenceViewModel.getAllGeofencesAsync().observe(getViewLifecycleOwner(), new Observer<List<GeofenceStats>>() {
-            @Override
-            public void onChanged(List<GeofenceStats> geofenceStatsList) {
-
-                    if (geofenceStatsList != null) {
-                        List<String> geofenceNames = new ArrayList<>();
-                        int index = 1;
-                        for (GeofenceStats geofenceStats : geofenceStatsList) {
-                            String reminder = geofenceStats.getReminder();
-                            // Append index and reminder to the geofenceNames list
-                            geofenceNames.add("Geofence " + index + " - " + reminder);
-                            index++;
-                        }
-
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, geofenceNames);
-                        geofenceListView.setAdapter(adapter);
-                    }
-
-            }
-        });
-
-        dialog.show();
-    }
-
-    // Implement this method to retrieve geofence names or details to display in the list
-    private List<String> getGeofenceNames() {
-        // Retrieve your geofence data here (e.g., from Room database or ViewModel)
-        // Return a list of geofence names or details
-        // For example:
-        List<String> geofenceNames = new ArrayList<>();
-        // Add geofence names to the list
-        // geofenceNames.add("Geofence 1");
-        // geofenceNames.add("Geofence 2");
-        // ...
-        return geofenceNames;
-    }
     private void enableUserLocation() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
@@ -210,8 +154,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableUserLocation();
             } else {
-                // Permission denied
-                // Handle this scenario as needed
+
+
             }
         }
     }
@@ -221,14 +165,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         enableUserLocation();
 
         mMap.setOnMapClickListener(this::onMapClick);
-        loadSavedGeofences(); // Load and display saved geofences/markers on map
+        loadSavedGeofences();
 
 
-        // Customize the map as needed
-        // For example:
-        // mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        // Add markers, set initial camera position, or perform other map-related operations here
+
+
     }
     @Override
     public void onMapClick(LatLng latLng) {
@@ -248,7 +190,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         circleOptions.strokeWidth(4);
         mMap.addCircle(circleOptions);
 
-        // Display an input dialog to get the user's custom reminder
+
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Enter Reminder");
         final EditText input = new EditText(requireContext());
@@ -260,16 +202,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 String reminder = input.getText().toString().trim();
                 if (!reminder.isEmpty()) {
                     String uniqueId = "UniqueId_" + area.latitude + "_" + area.longitude;
-//                    // Save the reminder with its respective Geofence ID
-//                    SharedPreferences.Editor editor = savedGeofence.edit();
-//                    editor.putString(uniqueId, reminder);
-//                    editor.apply();
-//
-//
-//                    // Create a geofence with the custom reminder as a context-specific data item
-//                    Bundle reminderData = new Bundle();
-//                    reminderData.putString("Reminder", reminder);
-                    // Save geofence into the Room database
+
+
+
+
+
+
+
+
+
+
                     GeofenceStats geofenceStat = new GeofenceStats(uniqueId, reminder, area.latitude, area.longitude);
                     geofenceViewModel.insert(geofenceStat);
 
@@ -294,13 +236,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             .addOnSuccessListener(requireActivity(), new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    // Geofences added successfully
+
                                 }
                             })
                             .addOnFailureListener(requireActivity(), new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    // Failed to add Geofences
+
                                 }
                             });
 
@@ -318,17 +260,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         builder.show();
     }
-
-
     private void loadSavedGeofences() {
-        // Retrieve geofences from the Room database asynchronously using LiveData
+
 
 
             geofenceViewModel.getAllGeofencesAsync().observe(getViewLifecycleOwner(), new Observer<List<GeofenceStats>>() {
                 @Override
                 public void onChanged(List<GeofenceStats> geofenceStatsList) {
                     if (geofenceStatsList != null) {
-                        // Clear the map before adding new markers
+
 
 
                         for (GeofenceStats geofenceStats : geofenceStatsList) {
@@ -337,10 +277,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             String reminder = geofenceStats.getReminder();
 
                             Log.d("Hdhdhdhdhdhdhdhdhdhd", "onChanged: " + reminder);
-                            // Create a Geofence object using retrieved data
+
                             Geofence geofence = new Geofence.Builder()
                                     .setRequestId(geofenceStats.getGeofenceName())
-                                    .setCircularRegion(latitude, longitude, 100) // Set your radius here
+                                    .setCircularRegion(latitude, longitude, 100)
                                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
                                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                                             Geofence.GEOFENCE_TRANSITION_EXIT |
@@ -350,12 +290,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
                             geofenceList.add(geofence);
 
-                            // Add marker for each geofence
+
                             LatLng geofenceLocation = new LatLng(latitude, longitude);
                             mMap.addMarker(new MarkerOptions().position(geofenceLocation));
                         }
 
-                        // Register the retrieved geofences
+
                         reRegisterGeofences();
                     }
                 }
@@ -364,7 +304,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
 
 
-
+    /**
+     * This method is used to re-load geofences when the app is restarted.
+     *
+     */
     private void reRegisterGeofences() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED || geofenceList.isEmpty()) {
@@ -375,16 +318,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 .addOnSuccessListener(requireActivity(), new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Geofences added successfully
+
                     }
                 })
                 .addOnFailureListener(requireActivity(), new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Failed to add Geofences
+
                     }
                 });
     }
+
+    /**
+     * @return A GeofencingRequest object used to register geofences.
+     * This method is used to create a GeofencingRequest object that will be used to register geofences.
+     */
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
@@ -393,6 +341,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         return builder.build();
     }
 
+    /**
+     * @return A PendingIntent that will handle geofence transitions.
+     * This method is used to get a PendingIntent object that will be used to generate an intent when a geofence transition occurs.
+     */
     private PendingIntent getGeofencePendingIntent() {
         if (geofencePendingIntent != null) {
             return geofencePendingIntent;
@@ -417,6 +369,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     };
 
+    /**
+     * This method is called when the fragment is visible to the user and actively running.
+     */
     @Override
     public void onStart() {
         super.onStart();

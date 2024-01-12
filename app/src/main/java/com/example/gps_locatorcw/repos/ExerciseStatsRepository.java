@@ -1,9 +1,13 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.repos;
 
 import androidx.lifecycle.LiveData;
+
+import com.example.gps_locatorcw.databases.DAO.StatDAO;
+import com.example.gps_locatorcw.databases.entities.ExerciseStats;
+
 import java.util.List;
 
-// ExerciseStatsRepository.java
+
 public class ExerciseStatsRepository {
 
     private StatDAO statDAO;
@@ -13,7 +17,7 @@ public class ExerciseStatsRepository {
     }
 
 
-    // Add a suspend function to fetch data asynchronously
+
     public LiveData<List<ExerciseStats>> getAllExerciseStatsAsync() {
         return statDAO.getAllExerciseStatsAsync();
     }

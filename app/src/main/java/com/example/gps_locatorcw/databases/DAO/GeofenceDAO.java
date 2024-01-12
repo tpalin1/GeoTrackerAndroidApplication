@@ -1,11 +1,14 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.databases.DAO;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.gps_locatorcw.databases.entities.GeofenceStats;
 
 import java.util.List;
 
@@ -25,6 +28,9 @@ public interface GeofenceDAO {
 
     @Update
     void updateGeofence(GeofenceStats geofence);
+
+    @Delete
+    void delete(GeofenceStats geofenceStats);
 
     @Query("DELETE FROM geofence_table WHERE geofenceId = :id")
     void deleteGeofenceById(int id);

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <!-- Layout for the dialog box -->
     <ListView
         android:id="@+id/geofenceListView"
@@ -11,6 +12,5 @@
         android:dividerHeight="1dp"
         android:padding="8dp"
         android:background="@android:color/white"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

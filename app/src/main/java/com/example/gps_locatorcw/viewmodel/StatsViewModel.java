@@ -1,21 +1,22 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.List;
-
 public class StatsViewModel extends ViewModel {
     private MutableLiveData<Double> distanceTravelled;
 
-    private MutableLiveData<String> exerciseDuration; // Store the exercise duration
-    private MutableLiveData<String> averagePace; // Store the average pace
+    private MutableLiveData<String> exerciseDuration;
+    private MutableLiveData<String> averagePace;
 
 
-
-
-
+    /**
+     * Constructor for the ViewModel
+     * Initialise the LiveData objects
+     * Set initial values for duration and pace (if needed)
+     * Set initial value for distance travelled
+     */
     public StatsViewModel() {
         distanceTravelled = new MutableLiveData<>();
         distanceTravelled.setValue(0.0);
@@ -23,35 +24,54 @@ public class StatsViewModel extends ViewModel {
         exerciseDuration = new MutableLiveData<>();
         averagePace = new MutableLiveData<>();
 
-        // Set initial values for duration and pace (if needed)
-        exerciseDuration.setValue("00:00"); // Set initial duration as 00:00
-        averagePace.setValue("00:00"); // Set initial pace as 00:00 per km
+
+        exerciseDuration.setValue("00:00");
+        averagePace.setValue("00:00");
 
     }
 
+    /**
+     * @return The LiveData object for distance travelled
+     */
     public LiveData<Double> getDistanceTravelled() {
         return distanceTravelled;
     }
 
+    /**
+     * @param distance The distance to update the LiveData object with
+     *                 Method to update the distance travelled
+     */
     public void updateDistance(double distance) {
         double currentDistance = distanceTravelled.getValue();
         distanceTravelled.setValue(distance);
     }
 
-    // Methods to retrieve LiveData for exercise duration and average pace
+    /**
+     * @return The LiveData objects for exercise duration and average pace
+     */
+
     public LiveData<String> getExerciseDuration() {
         return exerciseDuration;
     }
 
+    /**
+     * @return The LiveData objects for exercise duration and average pace
+     */
     public LiveData<String> getAveragePace() {
         return averagePace;
     }
 
-    // Methods to update exercise duration and average pace
+    /**
+     * @param duration The duration to update the LiveData object with
+     */
+
     public void updateExerciseDuration(String duration) {
         exerciseDuration.setValue(duration);
     }
 
+    /**
+     * @param pace The pace to update the LiveData object with
+     */
     public void updateAveragePace(String pace) {
         averagePace.setValue(pace);
     }

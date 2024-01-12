@@ -1,4 +1,4 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.databases.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -26,7 +26,7 @@ public class GeofenceStats {
     @ColumnInfo(name = "longitude")
     private double longitude;
 
-    // Additional fields specific to geofences as needed
+
 
     public GeofenceStats(@NonNull String geofenceName, String reminder, double latitude, double longitude) {
         this.geofenceName = geofenceName;
@@ -35,7 +35,7 @@ public class GeofenceStats {
         this.longitude = longitude;
     }
 
-    // Getters and setters for the fields
+
 
     public int getGeofenceId() {
         return geofenceId;
@@ -45,7 +45,7 @@ public class GeofenceStats {
         this.geofenceId = geofenceId;
     }
 
-    // Getter and setter for reminder field
+
     public String getReminder() {
         return reminder;
     }

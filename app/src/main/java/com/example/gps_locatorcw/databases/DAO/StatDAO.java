@@ -1,4 +1,6 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.databases.DAO;
+
+import android.database.Cursor;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -7,13 +9,21 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.gps_locatorcw.databases.entities.ExerciseStats;
+
 import java.util.List;
 @Dao
 public interface StatDAO {
 
+
+
+
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(ExerciseStats stat);
 
+    @Query("SELECT * FROM user_stattable")
+    Cursor getAllExerciseStatsCursor();
 
 
     @Query("UPDATE user_stattable SET exercise = :newExerciseName WHERE exercise = :oldExerciseName")
@@ -23,7 +33,10 @@ public interface StatDAO {
     List<ExerciseStats> getAllExerciseStats();
 
     @Update
-    void updateExerciseStats(ExerciseStats exerciseStats);
+    void updateExerciseStats(List<ExerciseStats> exerciseStats);
+
+
+
 
     @Query("SELECT * FROM user_stattable")
     List<ExerciseStats> getAllCats();
@@ -38,6 +51,8 @@ public interface StatDAO {
     List<ExerciseStats> getWalk();
 
     @Query("SELECT * FROM user_stattable")
-    LiveData<List<ExerciseStats>> getAllExerciseStatsAsync(); // Return LiveData with coroutines
+    LiveData<List<ExerciseStats>> getAllExerciseStatsAsync();
 
+    @Query("SELECT * FROM user_stattable WHERE exercise = :exercise")
+    ExerciseStats getExerciseByName(String exercise);
 }

@@ -1,4 +1,4 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -12,6 +12,11 @@ import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
+import com.example.gps_locatorcw.R;
+import com.example.gps_locatorcw.viewmodel.GeofenceViewModel;
+import com.example.gps_locatorcw.databases.DAO.GeofenceDAO;
+import com.example.gps_locatorcw.databases.GeofenceDatabase;
+import com.example.gps_locatorcw.databases.entities.GeofenceStats;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -23,9 +28,18 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     private static final String TAG = "GeofenceReceiver";
     private static final String CHANNEL_ID = "GeofenceChannel";
     private static final int NOTIFICATION_ID = 1001;
+    public GeofenceViewModel geofenceViewModel;
+    private GeofenceDAO geofenceDAO;
 
+
+    /**
+     * This method is called when the BroadcastReceiver is receiving an Intent broadcast.
+     * @param context The Context in which the receiver is running.
+     * @param intent The Intent being received.
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
+
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             Log.d(TAG, "onReceive: Error receiving geofence event...");
@@ -42,10 +56,12 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
             LiveData<List<GeofenceStats>> allGeofencesLiveData = geofenceDAO.getAllGeofencesAsync();
 
+
             allGeofencesLiveData.observeForever(new Observer<List<GeofenceStats>>() {
                 @Override
                 public void onChanged(List<GeofenceStats> allGeofences) {
-                    // Iterate through all geofences in the database to find a match
+
+
                     for (Geofence triggeredGeofence : triggeredGeofences) {
                         String triggeredGeofenceId = triggeredGeofence.getRequestId();
 
@@ -55,15 +71,21 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
                             if (geofenceStats.getGeofenceName().equals(triggeredGeofenceId) ){
 
-                                // Match found for the triggered geofence in the database
+
                                 String reminder = geofenceStats.getReminder();
                                 showNotification(context, "Entered", reminder);
-                                break; // Stop further iteration once a match is found
+                                GeofenceDatabase.databaseWriteExecutor.execute(() -> {
+                                    geofenceDAO.delete(geofenceStats);
+                                });
+
+                                break;
                             }
                         }
                     }
 
-                    // Don't forget to remove the observer when it's no longer needed
+
+
+
                     allGeofencesLiveData.removeObserver(this);
                 }
             });
@@ -71,30 +93,12 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     }
 
 
-    // Method to extract numeric part from a string
-    // Method to extract numeric part from a string
-    private int extractNumericPart(String str) {
-        StringBuilder numericPart = new StringBuilder();
-        boolean foundNumeric = false;
-
-        for (char c : str.toCharArray()) {
-            if (Character.isDigit(c)) {
-                numericPart.append(c);
-                foundNumeric = true;
-            } else if (foundNumeric && c == '.') {
-                // If a decimal point is found after the numeric part, break the loop
-                break;
-            }
-        }
-
-        if (numericPart.length() == 0) {
-            // Handle the case where no numeric part was found
-            return -1; // or throw an exception, return a default value, etc.
-        }
-
-        // Parse the extracted numeric part to integer
-        return Integer.parseInt(numericPart.toString());
-    }
+    /**
+     * @param context The Context in which the receiver is running.
+     * @param transitionText
+     * @param reminder
+     * This method is used to show a notification when a geofence transition is triggered.
+     */
     private void showNotification(Context context, String transitionText, String reminder) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

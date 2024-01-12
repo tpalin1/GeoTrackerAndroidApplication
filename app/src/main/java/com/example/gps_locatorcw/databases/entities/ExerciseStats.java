@@ -1,4 +1,4 @@
-package com.example.gps_locatorcw;
+package com.example.gps_locatorcw.databases.entities;
 
 
 import android.graphics.Point;
@@ -9,9 +9,11 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.example.gps_locatorcw.DoubleArrayListConverter;
+
 import java.util.List;
 
-@Entity(tableName = "user_stattable")
+@Entity(tableName ="user_stattable")
 @TypeConverters(DoubleArrayListConverter.class)
 public class ExerciseStats {
 
@@ -33,7 +35,7 @@ public class ExerciseStats {
 
 
 
-    // New field representing a list of points (latitude and longitude)
+
 
 
     @ColumnInfo(name = "coordinates")
@@ -47,7 +49,7 @@ public class ExerciseStats {
         this.distance = distance;
         this.avgpace = avgpace;
     }
-    // Getter method for 'exercise' field
+
     public String getExercise() {
         return exercise;
     }
@@ -81,7 +83,7 @@ public class ExerciseStats {
     public List<double[]> getCoordinates() {
         return coordinates;
     }
-    //Setter method for 'exercise' field
+
     public void setExercise(String exercise) {
         this.exercise = exercise;
     }
