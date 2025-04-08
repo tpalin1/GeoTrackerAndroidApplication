@@ -10,6 +10,10 @@ public class StatsViewModel extends ViewModel {
     private MutableLiveData<String> exerciseDuration;
     private MutableLiveData<String> averagePace;
 
+    private MutableLiveData<Boolean> isExercising = new MutableLiveData<>();
+
+
+
 
     /**
      * Constructor for the ViewModel
@@ -46,10 +50,23 @@ public class StatsViewModel extends ViewModel {
         distanceTravelled.setValue(distance);
     }
 
+    public MutableLiveData<Boolean> getIsExercising() {
+        if (isExercising == null) {
+            isExercising = new MutableLiveData<>();
+        }
+        return isExercising;
+    }
+
+    public void setIsExercising(boolean exercising) {
+        if (isExercising != null) {
+            isExercising.setValue(exercising);
+        }
+    }
+
     /**
      * @return The LiveData objects for exercise duration and average pace
      */
-
+    // Methods to retrieve LiveData for exercise duration and average pace
     public LiveData<String> getExerciseDuration() {
         return exerciseDuration;
     }
@@ -64,7 +81,7 @@ public class StatsViewModel extends ViewModel {
     /**
      * @param duration The duration to update the LiveData object with
      */
-
+    // Methods to update exercise duration and average pace
     public void updateExerciseDuration(String duration) {
         exerciseDuration.setValue(duration);
     }

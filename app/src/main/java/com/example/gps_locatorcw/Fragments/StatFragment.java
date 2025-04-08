@@ -184,7 +184,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                     locationService.startExercise();
                     moveToCurrentUserLocation();
                     startButton.setVisibility(View.GONE);
-
+                    distanceViewModel.setIsExercising(true);
                     stopBtn.setVisibility(View.VISIBLE);
                 }
             }
@@ -234,6 +234,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                     if (locationService != null) {
                         Log.d("Cancelled notifiation", "Service unbinded: ");
                         locationService.stopExercise();
+                        distanceViewModel.setIsExercising(false);
 
 
                     }
@@ -484,6 +485,7 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
 
 
                 Log.d("Here is the exercise", exerciseName);
+
                 database = StatDatabase.getDatabase(locationService.getApplicationContext());
                 statDAO = database.statDAO();
 
@@ -501,6 +503,10 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
                         Log.d("ExerciseStats", "Exercise: " + stats.getExercise() + ", Duration: " + stats.getDuration());
                     }
                 });
+                if (requireActivity().getSupportFragmentManager() != null) {
+                    requireActivity().getSupportFragmentManager().popBackStack();
+                }
+
 
 
             }
@@ -509,13 +515,14 @@ public class StatFragment extends Fragment implements OnMapReadyCallback, Google
         builder.setNegativeButton("Dont save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (requireActivity().getSupportFragmentManager() != null) {
+                    requireActivity().getSupportFragmentManager().popBackStack();
+                }
                 dialog.cancel();
             }
         });
 
-        if (requireActivity().getSupportFragmentManager() != null) {
-            requireActivity().getSupportFragmentManager().popBackStack();
-        }
+
         builder.show();
     }
 
@@ -621,7 +628,7 @@ private void enableUserLocation() {
 
 
         // Check if the user has started an exercise
-        if (locationService != null && locationService.hasStarted()) {
+        if (distanceViewModel.getIsExercising().getValue() != null && distanceViewModel.getIsExercising().getValue()) {
             // User has started an exercise, proceed with enabling features
 
             moveToCurrentUserLocation();
